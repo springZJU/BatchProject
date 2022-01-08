@@ -1,0 +1,69 @@
+function varargout=CalculateMMN(TrialParas,plotpara,savepath)
+eval([GetStructStr(plotpara) '=ReadStructValue(plotpara);']);
+AxisHeight=0.9/length(Chs);
+AxisWidth=0.9/length(Diff);
+BasicXpos=0.03;
+BasicYpos=1-AxisHeight-0.03;
+Ymin=min([TrialParas.SpecYlength]);
+tic
+if ToPlot==1
+    h=figure
+    set(gcf,'outerposition',get(0,'screensize'));
+    
+end
+for dev_diff=Diff
+    count=0;
+    for ch=Chs
+       
+        count=count+1;
+        [Spect.CData Spect.XData Spect.YData Spect.Coi ind Spect.Single ]=CalMeanSpecRes(TrialParas,CueType,dev_diff,Behav,ResStr,Ymin,PlotWin,'ISI',ISI','MMN',MMN);
+        if ToPlot==1
+            subplot('position',[BasicXpos+(find(Diff==dev_diff)-1)*(AxisWidth+0.01) BasicYpos-(count-1)*(AxisHeight+0.003) AxisWidth AxisHeight])
+            try
+                if Cscale=='auto_equalCLim'
+                    PlotSpect(Spect,Cscale,ch,Ytick,'ColorStyle',ColorStyle,'linepos',linepos,'Coneinf',Coneinf);
+                    Ax{ch,dev_diff}=gca;    
+                   CLimMax(ch,dev_diff)= max(abs(Ax{ch,dev_diff}.CLim));
+                end
+                if dev_diff==Diff(1)
+                    ylabel(['Ch' num2str(ch)]);
+                end
+                if dev_diff>Diff(1)
+                    set(gca,'yticklabel','');
+                end
+                if dev_diff==Diff(end)
+                    colorbar
+                end
+                if ch~=Chs(end)
+                    set(gca,'xticklabel','');
+                else
+                    set(gca,'xticklabel',num2strcell(1000*get(gca,'xtick')));
+                    ylabel([ResStr '(ms)'])
+                end
+                if ch==Chs(1)
+                    title([CueType ' ' Behav ' ' ResStr ' Diff' num2str(dev_diff-1) '   n=' num2str(length(ind)) ]);
+                end
+            catch
+            end
+        end
+    end
+    SpectAll{dev_diff}=Spect;
+    IndN(dev_diff)=length(ind);
+end
+if ToPlot==1
+for ch=Chs
+    CLimChMax=max(CLimMax(ch,:));
+    for dev_diff=
+    set(Ax,'CLim',[-max(abs(Ax.CLim)) max(abs(Ax.CLim))]);
+    
+%     newpath=[savefold  ];
+        newpath=[savefold '\' CueType ];
+    figsavepath=check_mkdir_SPR(savepath,newpath);
+    %     set(gcf,'outerposition',get(0,'screensize'));
+    saveas(h,[figsavepath  '\' CueType  ' ' Behav ' '  ResStr ' ' num2str(Chs(1)) '-' num2str(Chs(end)) '.jpg']);
+    close
+end
+varargout{1}=SpectAll;
+varargout{2}=IndN;
+toc
+

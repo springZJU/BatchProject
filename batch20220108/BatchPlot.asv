@@ -1,0 +1,36 @@
+clear all
+clc
+batchtype =  'Process IndividualData';
+EvalStructureSelect = EvalCellParaStr('CellAll','ProtocolName','Basic');  % 
+Para = SetUserPara('EvalStructureSelect',EvalStructureSelect,'ChAll',1,...%     'CertainPath',{'RawDataResultByTrial'},...
+    'LoadIndividualData',false,'UpdateIndividualData',false,...
+    'PlotCh',1,'Wavelet','morlet','FsNew',300,'DownSampleRate',60,'CopyRootPath','F:\gym\batchres',...
+    'DeleteType','Folder','DeleteName','ResultFigures','DeleteFirstLastTrial',0, ...
+    'TimeFrequencyRegion',[0 3; 1.5 10],'BackgroundRegion',[-2 3],'RenameType','File');
+switch batchtype
+    case 'Generate TrialParas'
+        CellParas = GenerateTrialParas(Para);
+    case 'Process TrialParas'
+        CellParas = ProcessTrialParas(Para);
+%     case 'Plot Figures'
+%         CellParas = PlotFiguresParas(Para);
+    case 'Organise Figures'
+        CellParas = OrganiseFiguresParas(Para);
+    case 'Process IndividualData'
+        CellParas = ProcessIndividualData(Para);
+    case 'Delelte Items' 
+        CellParas = DelelteItems(Para);
+    case 'Rename Files'
+        CellParas = RenameItems(Para);
+    case 'Process RatNoiseSPR'
+        CellParas = ProcessRatNoiseSPR(Para);
+    case 'Organise RatSPR Figures'
+        CellParas = OrganiseRatSPRFiguresParas(Para);
+end
+
+
+
+
+
+
+
